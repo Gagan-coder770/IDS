@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Make auth prompt and link black and bold */
+        .auth-prompt, .auth-prompt a, .auth-link {
+            color: #111 !important;
+            font-weight: 600;
+            text-shadow: none !important;
+        }
+    </style>
+</head>
+<body>
+            <div class="bg-hero"></div>
+            <div class="container auth-container">
+                <div class="logo-header">
+                    <img src="/static/cat_logo.png" alt="Cat Logo" class="logo-img">
+                    <h2><i class="fa fa-user-plus"></i> Register</h2>
+                </div>
+                <img src="/static/cat_logo.png" alt="Cat Logo" class="hero-img">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                <form method="POST" class="auth-form" onsubmit="return checkPasswords();">
+                    <div class="input-group animated">
+                        <i class="fa fa-user"></i>
+                        <input class="input-align" type="text" name="username" placeholder="Username" required autocomplete="username">
+                    </div>
+                    <div class="input-group animated">
+                        <i class="fa fa-lock"></i>
+                        <input class="input-align" id="reg-password" type="password" name="password" placeholder="Password" required autocomplete="new-password" title="Password must be at least 6 characters">
+                        <span onclick="togglePassword('reg-password', this)" class="toggle-eye"><i class="fa fa-eye"></i></span>
+                        <span class="tooltip">Password must be at least 6 characters</span>
+                    </div>
+                    <div class="input-group animated">
+                        <i class="fa fa-lock"></i>
+                        <input class="input-align" id="reg-confirm" type="password" name="confirm_password" placeholder="Confirm Password" required autocomplete="new-password">
+                        <span onclick="togglePassword('reg-confirm', this)" class="toggle-eye"><i class="fa fa-eye"></i></span>
+                    </div>
+                    <select name="role" class="animated">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button type="submit" class="animated-btn"><i class="fa fa-user-plus"></i> Register</button>
+                </form>
+                <p class="auth-prompt" style="margin-top:16px;">
+  Already have an account? <a href="/login" class="auth-link">Login</a>
+</p>
+            </div>
+            <script>
+            function togglePassword(id, el) {
+                var input = document.getElementById(id);
+                if (input.type === "password") {
+                    input.type = "text";
+                    el.innerHTML = '<i class="fa fa-eye-slash"></i>';
+                } else {
+                    input.type = "password";
+                    el.innerHTML = '<i class="fa fa-eye"></i>';
+                }
+            }
+            function checkPasswords() {
+                var p1 = document.getElementById('reg-password').value;
+                var p2 = document.getElementById('reg-confirm').value;
+                if (p1 !== p2) {
+                    alert('Passwords do not match!');
+                    return false;
+                }
+                return true;
+            }
+            // Animate form fields
+            document.querySelectorAll('.animated').forEach(function(el, i) {
+                el.style.opacity = 0;
+                setTimeout(function() { el.style.opacity = 1; el.style.transform = 'translateY(0)'; }, 200 + i*100);
+            });
+            </script>
+</body>
+</html>

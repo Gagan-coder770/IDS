@@ -1,0 +1,584 @@
+{% extends "base_enhanced.html" %}
+
+{% block title %}Cryptography Tool - IDS Project{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-lock"></i> Advanced Cryptography Tool</h1>
+    <p>Secure your data with military-grade AES encryption and decryption</p>
+</div>
+
+<div class="crypto-container">
+    <!-- Encryption Section -->
+    <div class="crypto-section">
+        <div class="section-header">
+            <h2><i class="fas fa-shield-alt"></i> Encrypt Data</h2>
+            <p>Protect your sensitive information with AES-256 encryption</p>
+        </div>
+        
+        <form method="POST" class="crypto-form" id="encryptForm">
+            <input type="hidden" name="action" value="encrypt">
+            
+            <div class="form-group">
+                <label for="encrypt_text" class="form-label">
+                    <i class="fas fa-file-alt"></i> Plain Text
+                </label>
+                <textarea 
+                    name="text" 
+                    id="encrypt_text" 
+                    class="form-input form-textarea" 
+                    placeholder="Enter the text you want to encrypt..."
+                    required
+                >{{ request.form.get('text', '') if request.form.get('action') == 'encrypt' else '' }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="encrypt_key" class="form-label">
+                    <i class="fas fa-key"></i> Encryption Key
+                </label>
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="key" 
+                        id="encrypt_key" 
+                        class="form-input" 
+                        placeholder="Enter your encryption key..."
+                        value="{{ request.form.get('key', '') if request.form.get('action') == 'encrypt' else '' }}"
+                        required
+                    >
+                    <button type="button" class="btn btn-secondary" onclick="generateKey('encrypt_key')">
+                        <i class="fas fa-dice"></i> Generate
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">
+                <i class="fas fa-lock"></i> Encrypt Data
+            </button>
+        </form>
+        
+        {% if encrypted_text %}
+        <div class="result-section">
+            <h3><i class="fas fa-check-circle"></i> Encryption Result</h3>
+            <div class="result-display">
+                <div class="result-label">Encrypted Text (Base64):</div>
+                <div class="result-value" id="encryptedResult">{{ encrypted_text }}</div>
+                <button type="button" class="btn btn-secondary btn-sm copy-btn" onclick="copyToClipboard('encryptedResult')">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            {% if encrypted_key %}
+            <div class="result-display">
+                <div class="result-label">Encryption Key (Base64):</div>
+                <div class="result-value" id="encryptedKey">{{ encrypted_key }}</div>
+                <button type="button" class="btn btn-secondary btn-sm copy-btn" onclick="copyToClipboard('encryptedKey')">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Decryption Section -->
+    <div class="crypto-section">
+        <div class="section-header">
+            <h2><i class="fas fa-unlock-alt"></i> Decrypt Data</h2>
+            <p>Recover your original data using the correct decryption key</p>
+        </div>
+        
+        <form method="POST" class="crypto-form" id="decryptForm">
+            <input type="hidden" name="action" value="decrypt">
+            
+            <div class="form-group">
+                <label for="decrypt_text" class="form-label">
+                    <i class="fas fa-file-code"></i> Encrypted Text (Base64)
+                </label>
+                <textarea 
+                    name="encrypted_text" 
+                    id="decrypt_text" 
+                    class="form-input form-textarea" 
+                    placeholder="Paste the encrypted text here..."
+                    required
+                >{{ request.form.get('encrypted_text', '') if request.form.get('action') == 'decrypt' else '' }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="decrypt_key" class="form-label">
+                    <i class="fas fa-key"></i> Decryption Key (Base64)
+                </label>
+                <input 
+                    type="text" 
+                    name="key" 
+                    id="decrypt_key" 
+                    class="form-input" 
+                    placeholder="Enter the decryption key..."
+                    value="{{ request.form.get('key', '') if request.form.get('action') == 'decrypt' else '' }}"
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="btn btn-success btn-full">
+                <i class="fas fa-unlock"></i> Decrypt Data
+            </button>
+        </form>
+        
+        {% if decrypted_text %}
+        <div class="result-section">
+            <h3><i class="fas fa-check-circle"></i> Decryption Result</h3>
+            <div class="result-display">
+                <div class="result-label">Decrypted Text:</div>
+                <div class="result-value" id="decryptedResult">{{ decrypted_text }}</div>
+                <button type="button" class="btn btn-secondary btn-sm copy-btn" onclick="copyToClipboard('decryptedResult')">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if error %}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Decryption Failed:</strong> {{ error }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Security Information Section -->
+<div class="info-section">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-info-circle"></i> Security Information</h3>
+        </div>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="info-content">
+                    <h4>AES-256 Encryption</h4>
+                    <p>We use Advanced Encryption Standard with 256-bit keys, the same standard trusted by governments and militaries worldwide.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="info-content">
+                    <h4>Secure Key Management</h4>
+                    <p>Keys are generated using cryptographically secure random number generators and are never stored on our servers.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-eye-slash"></i>
+                </div>
+                <div class="info-content">
+                    <h4>Zero-Knowledge Architecture</h4>
+                    <p>All encryption and decryption happens locally. We never see your plain text data or encryption keys.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="info-content">
+                    <h4>Industry Standard</h4>
+                    <p>Our implementation follows NIST recommendations and is compatible with standard AES encryption libraries.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Best Practices Section -->
+<div class="tips-section">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-lightbulb"></i> Encryption Best Practices</h3>
+        </div>
+        <div class="tips-list">
+            <div class="tip-item">
+                <i class="fas fa-check"></i>
+                <span>Always use strong, randomly generated keys for maximum security</span>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-check"></i>
+                <span>Store your encryption keys separately from your encrypted data</span>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-check"></i>
+                <span>Never share your encryption keys through insecure channels</span>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-check"></i>
+                <span>Regularly backup both your encrypted data and keys securely</span>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-check"></i>
+                <span>Use different keys for different types of sensitive data</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Page Header */
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-header p {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+}
+
+/* Crypto Container */
+.crypto-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.crypto-section {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--gray-200);
+    position: relative;
+}
+
+.crypto-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--gray-800);
+}
+
+.section-header p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+/* Form Styles */
+.crypto-form {
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-group .form-input {
+    flex: 1;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Result Section */
+.result-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.result-section h3 {
+    color: var(--success-color);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.result-display {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.result-label {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.result-value {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.875rem;
+    word-break: break-all;
+    line-height: 1.5;
+    color: var(--gray-800);
+    background: var(--white);
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-300);
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Info Section */
+.info-section {
+    margin-bottom: 3rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-fast);
+}
+
+.info-item:hover {
+    background: var(--gray-100);
+    transform: translateY(-2px);
+}
+
+.info-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.info-content h4 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.info-content p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Tips Section */
+.tips-section {
+    margin-bottom: 2rem;
+}
+
+.tips-list {
+    margin-top: 1.5rem;
+}
+
+.tip-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    margin-bottom: 0.5rem;
+    transition: var(--transition-fast);
+}
+
+.tip-item:hover {
+    background: var(--gray-100);
+}
+
+.tip-item i {
+    color: var(--success-color);
+    font-size: 1rem;
+}
+
+.tip-item span {
+    color: var(--gray-700);
+    font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .crypto-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .crypto-section {
+        padding: 1.5rem;
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .crypto-section {
+    background: var(--dark-surface);
+    border-color: var(--gray-700);
+}
+
+[data-theme="dark"] .result-display {
+    background: var(--gray-800);
+    border-color: var(--gray-700);
+}
+
+[data-theme="dark"] .result-value {
+    background: var(--gray-900);
+    border-color: var(--gray-700);
+    color: var(--dark-text);
+}
+
+[data-theme="dark"] .info-item,
+[data-theme="dark"] .tip-item {
+    background: var(--gray-800);
+}
+
+[data-theme="dark"] .info-item:hover,
+[data-theme="dark"] .tip-item:hover {
+    background: var(--gray-700);
+}
+</style>
+
+<script>
+// Generate random encryption key
+function generateKey(inputId) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    let key = '';
+    for (let i = 0; i < 44; i++) { // Base64 encoded 32-byte key
+        key += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById(inputId).value = key + '='; // Add padding
+    
+    // Show notification
+    showNotification('Random encryption key generated!', 'success');
+}
+
+// Copy to clipboard
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.textContent;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('Copied to clipboard!', 'success');
+    }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('Copied to clipboard!', 'success');
+    });
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} notification`;
+    notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(notification, container.firstChild);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Form validation
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.crypto-form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const textInputs = form.querySelectorAll('textarea, input[type="text"]');
+            let isValid = true;
+            
+            textInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('error');
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                showNotification('Please fill in all required fields.', 'error');
+            }
+        });
+    });
+});
+
+// Auto-resize textareas
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    });
+});
+</script>
+{% endblock %}

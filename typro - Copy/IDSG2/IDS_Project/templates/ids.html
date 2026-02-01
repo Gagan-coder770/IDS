@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IDS Single Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --accent: #007bff;
+      --bg: #f4f9ff;
+      --card: #ffffff;
+      --text: #0a2540;
+    }
+    body {
+      font-family: Inter, system-ui, Arial;
+      background: linear-gradient(180deg,#f6fbff 0%, #edf7ff 100%);
+      color: var(--text);
+      margin: 0;
+      padding: 18px;
+    }
+    .wrap { max-width: 1200px; margin: 20px auto 40px; }
+    .hero { text-align:center; margin-bottom: 20px; }
+    .hero h1 { color: var(--accent); font-size:1.8rem; margin:0; }
+    .hero p { margin:6px 0 0; color:#234; font-size:0.95rem; }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(6,30,60,0.08);
+      padding: 24px;
+      border: 1px solid rgba(6,55,120,0.06);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 980px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field { display:flex; flex-direction:column; gap:6px; }
+    label { font-size:0.86rem; color:var(--accent); font-weight:600; }
+    input[type="text"] {
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #d7e8ff;
+      font-size:0.95rem;
+      background:#fff;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.12);
+      outline:none;
+    }
+
+    .submit-row { grid-column: 1 / -1; text-align:center; margin-top:10px; }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--accent) 60%, #00a3ff 100%);
+      color:#fff; border:none; padding:12px 28px;
+      border-radius:10px; font-size:1rem; cursor:pointer;
+      box-shadow: 0 8px 20px rgba(0,123,255,0.25);
+      transition: all .2s;
+    }
+    .btn-primary:hover { transform:translateY(-2px); }
+
+    .note { text-align:center; margin-top:14px; font-size:0.9rem; color:#555; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Intrusion Detection System — Single Page</h1>
+      <p>Enter the features below and click <b>Analyze</b>. SweetAlert will show the attack type.</p>
+    </div>
+
+    <div class="card">
+      <form method="POST" action="{{ url_for('ids_single.ids_page') }}">
+        <div class="form-grid">
+          <!-- Step 1 -->
+          <div class="field"><label>duration</label><input name="duration" type="text"></div>
+          <div class="field"><label>protocol_type</label><input name="protocol_type" type="text"></div>
+          <div class="field"><label>flag</label><input name="flag" type="text"></div>
+          <div class="field"><label>src_bytes</label><input name="src_bytes" type="text"></div>
+          <div class="field"><label>dst_bytes</label><input name="dst_bytes" type="text"></div>
+          <div class="field"><label>land</label><input name="land" type="text"></div>
+          <div class="field"><label>wrong_fragment</label><input name="wrong_fragment" type="text"></div>
+          <div class="field"><label>urgent</label><input name="urgent" type="text"></div>
+          <div class="field"><label>hot</label><input name="hot" type="text"></div>
+          <div class="field"><label>num_failed_logins</label><input name="num_failed_logins" type="text"></div>
+          <div class="field"><label>logged_in</label><input name="logged_in" type="text"></div>
+          <div class="field"><label>num_compromised</label><input name="num_compromised" type="text"></div>
+
+          <!-- Step 2 -->
+          <div class="field"><label>root_shell</label><input name="root_shell" type="text"></div>
+          <div class="field"><label>su_attempted</label><input name="su_attempted" type="text"></div>
+          <div class="field"><label>num_file_creations</label><input name="num_file_creations" type="text"></div>
+          <div class="field"><label>num_shells</label><input name="num_shells" type="text"></div>
+          <div class="field"><label>num_access_files</label><input name="num_access_files" type="text"></div>
+          <div class="field"><label>is_guest_login</label><input name="is_guest_login" type="text"></div>
+          <div class="field"><label>count</label><input name="count" type="text"></div>
+          <div class="field"><label>srv_count</label><input name="srv_count" type="text"></div>
+          <div class="field"><label>serror_rate</label><input name="serror_rate" type="text"></div>
+          <div class="field"><label>rerror_rate</label><input name="rerror_rate" type="text"></div>
+          <div class="field"><label>same_srv_rate</label><input name="same_srv_rate" type="text"></div>
+          <div class="field"><label>diff_srv_rate</label><input name="diff_srv_rate" type="text"></div>
+
+          <!-- Step 3 -->
+          <div class="field"><label>srv_diff_host_rate</label><input name="srv_diff_host_rate" type="text"></div>
+          <div class="field"><label>dst_host_count</label><input name="dst_host_count" type="text"></div>
+          <div class="field"><label>dst_host_srv_count</label><input name="dst_host_srv_count" type="text"></div>
+          <div class="field"><label>dst_host_diff_srv_rate</label><input name="dst_host_diff_srv_rate" type="text"></div>
+          <div class="field"><label>dst_host_same_src_port_rate</label><input name="dst_host_same_src_port_rate" type="text"></div>
+          <div class="field"><label>dst_host_srv_diff_host_rate</label><input name="dst_host_srv_diff_host_rate" type="text"></div>
+
+          <div class="submit-row">
+            <button class="btn-primary" type="submit">Analyze</button>
+          </div>
+        </div>
+      </form>
+      <p class="note">Use values your model expects (e.g., protocol_type: tcp/udp/icmp; flag: SF/S0/REJ).</p>
+    </div>
+  </div>
+
+  {% set js_label = detection_label if detection_label is defined else (detection_result if detection_result is defined else None) %}
+  {% set js_conf = detection_confidence if detection_confidence is defined else None %}
+
+  <script>
+    const label = {{ js_label|tojson }};
+    const confidence = {{ js_conf|tojson }};
+
+    if (label) {
+      let icon = "info";
+      let title = "Detection Result";
+
+      switch (String(label).toLowerCase()) {
+        case "normal":
+          icon = "success"; title = "Detected Attack : Normal"; break;
+        case "dos":
+          icon = "error"; title = "Detected Attack : DOS"; break;
+        case "probe":
+          icon = "warning"; title = "Detected Attack : Probe"; break;
+        case "u2r":
+          icon = "error"; title = "Detected Attack : U2R"; break;
+        case "r2l":
+          icon = "error"; title = "Detected Attack : R2L"; break;
+        default:
+          icon = "error"; title = "Detected Attack : " + label;
+      }
+
+      let msg = `<p><b>Prediction:</b> ${label}</p>`;
+    //   if (confidence) { msg += `<p><b>Confidence:</b> ${confidence}%</p>`; }
+
+      swal({
+        title: title,
+        content: { element: "div", attributes: { innerHTML: msg } },
+        icon: icon,
+        button: "OK"
+      });
+    }
+  </script>
+</body>
+</html>

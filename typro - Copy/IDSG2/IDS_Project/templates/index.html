@@ -1,0 +1,486 @@
+{% extends "base_enhanced.html" %}
+
+{% block title %}Home - IDS Project{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">
+                Advanced <span class="gradient-text">Intrusion Detection</span> System
+            </h1>
+            <p class="hero-description">
+                Protect your network with our state-of-the-art IDS platform. Monitor, detect, and respond to security threats in real-time with advanced machine learning algorithms and comprehensive security tools.
+            </p>
+            <div class="hero-actions">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard.dashboard_home') if current_user.role == 'admin' else url_for('ids.ids_home') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                    <a href="{{ url_for('ids.ids_home') }}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-shield-alt"></i> Start Monitoring
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus"></i> Get Started
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="security-animation">
+                <div class="shield-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="pulse-rings">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Stats Section -->
+{% if current_user.is_authenticated %}
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Protection</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Monitoring</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <span class="stat-number">&lt;1ms</span>
+            <span class="stat-label">Response Time</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <span class="stat-number">256-bit</span>
+            <span class="stat-label">Encryption</span>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="section-header">
+        <h2>Comprehensive Security Suite</h2>
+        <p>Everything you need to protect your digital infrastructure in one powerful platform.</p>
+    </div>
+    
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 class="feature-title">Real-time IDS</h3>
+            <p class="feature-description">
+                Advanced intrusion detection with machine learning algorithms. Monitor network traffic, detect anomalies, and respond to threats instantly.
+            </p>
+            <div class="feature-actions">
+                <a href="{{ url_for('ids.ids_home') if current_user.is_authenticated else url_for('auth.login') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> Explore IDS
+                </a>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h3 class="feature-title">Cryptography Tools</h3>
+            <p class="feature-description">
+                Secure your data with military-grade encryption. Advanced AES encryption and decryption tools with key management capabilities.
+            </p>
+            <div class="feature-actions">
+                <a href="{{ url_for('crypto.crypto_home') if current_user.is_authenticated else url_for('auth.login') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> Try Crypto Tools
+                </a>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3 class="feature-title">Port Scanner</h3>
+            <p class="feature-description">
+                Discover open ports and services on your network. Comprehensive scanning with detailed reports and vulnerability assessment.
+            </p>
+            <div class="feature-actions">
+                <a href="{{ url_for('scanner.scan_home') if current_user.is_authenticated else url_for('auth.login') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> Start Scanning
+                </a>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-key"></i>
+            </div>
+            <h3 class="feature-title">Password Manager</h3>
+            <p class="feature-description">
+                Secure password storage and management. Generate strong passwords, store them safely, and access them from anywhere.
+            </p>
+            <div class="feature-actions">
+                <a href="{{ url_for('password_manager.password_manager') if current_user.is_authenticated else url_for('auth.login') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> Manage Passwords
+                </a>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Analytics Dashboard</h3>
+            <p class="feature-description">
+                Comprehensive security analytics and reporting. Visualize threats, track security metrics, and generate detailed reports.
+            </p>
+            <div class="feature-actions">
+                <a href="{{ url_for('dashboard.dashboard_home') if current_user.is_authenticated and current_user.role == 'admin' else url_for('auth.login') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> View Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h3 class="feature-title">User Management</h3>
+            <p class="feature-description">
+                Secure user authentication and profile management. Multi-factor authentication and role-based access control.
+            </p>
+            <div class="feature-actions">
+                <a href="{{ url_for('profile') if current_user.is_authenticated else url_for('auth.login') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> Manage Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Security Tips Section -->
+<section class="tips-section">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-lightbulb"></i> Security Best Practices</h3>
+        </div>
+        <div class="tips-grid">
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Strong Passwords</h4>
+                    <p>Use unique, complex passwords for every account. Consider using our password manager for secure storage.</p>
+                </div>
+            </div>
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Regular Monitoring</h4>
+                    <p>Monitor your network traffic regularly. Enable real-time alerts for suspicious activities.</p>
+                </div>
+            </div>
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Keep Updated</h4>
+                    <p>Regularly update your systems and security tools. Enable automatic updates when possible.</p>
+                </div>
+            </div>
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Encrypt Data</h4>
+                    <p>Always encrypt sensitive data both in transit and at rest. Use our crypto tools for secure encryption.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Hero Section Styles */
+.hero-section {
+    padding: 4rem 0;
+    margin-bottom: 3rem;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+}
+
+/* Security Animation */
+.security-animation {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+}
+
+.shield-icon {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+    z-index: 2;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+}
+
+.pulse-rings {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pulse-ring {
+    position: absolute;
+    border: 3px solid var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    animation: pulse 2s infinite;
+}
+
+.pulse-ring:nth-child(1) {
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    animation-delay: 0s;
+}
+
+.pulse-ring:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    margin: -100px 0 0 -100px;
+    animation-delay: 0.7s;
+}
+
+.pulse-ring:nth-child(3) {
+    width: 250px;
+    height: 250px;
+    margin: -125px 0 0 -125px;
+    animation-delay: 1.4s;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+/* Stats Section */
+.stats-section {
+    margin-bottom: 4rem;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--gray-200);
+    transition: var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.stat-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 auto 1rem;
+}
+
+/* Features Section */
+.features-section {
+    margin-bottom: 4rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-header p {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+}
+
+.feature-actions {
+    margin-top: 1.5rem;
+}
+
+/* Tips Section */
+.tips-section {
+    margin-bottom: 4rem;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.tip-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-fast);
+}
+
+.tip-item:hover {
+    background: var(--gray-100);
+    transform: translateY(-2px);
+}
+
+.tip-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.tip-content h4 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.tip-content p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .btn-lg {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .security-animation {
+        height: 300px;
+    }
+    
+    .shield-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Port Scanner</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="module-card">
+        <div class="module-header"><i class="fa fa-network-wired"></i> Port Scanner
+            <span class="tooltip" title="Scan open ports on a host to check for vulnerabilities."><i class="fa fa-info-circle"></i></span>
+        </div>
+        <form method="POST" class="module-form">
+            <input type="text" name="target" placeholder="Target IP or Hostname" value="{{ request.form.target or '' }}" required>
+            <input type="text" name="ports" placeholder="Ports (e.g. 20-25 or 80,443)" value="{{ request.form.ports or '' }}" required>
+            <button type="submit"><i class="fa fa-search"></i> Scan</button>
+        </form>
+        {% if results %}
+            <table class="module-table">
+                <tr><th>Port</th><th>Status</th></tr>
+                {% for r in results %}
+                <tr><td>{{ r.port }}</td><td>{{ r.status }}</td></tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        {% if error %}
+            <div class="module-error">
+                <b>Error:</b> {{ error }}
+            </div>
+        {% endif %}
+    </div>
+    <footer class="footer">&copy; {{ 2025 }} Jai Hind College IDS Project</footer>
+    <style>
+    .module-card { max-width:500px; margin:40px auto; background:#fff; border-radius:16px; box-shadow:0 4px 24px #b0c4de; padding:32px; }
+    .module-header { font-size:1.5em; color:#007bff; margin-bottom:18px; display:flex; align-items:center; gap:10px; justify-content:center; }
+    .module-form { display:flex; flex-direction:column; gap:14px; }
+    .module-form input { border-radius:8px; border:1px solid #b0c4de; padding:10px; font-size:1em; }
+    .module-form button { background:#007bff; color:#fff; border:none; border-radius:6px; padding:10px 0; font-size:1.1em; font-weight:500; cursor:pointer; transition:background 0.2s; }
+    .module-form button:hover { background:#0056b3; }
+    .module-table { width:100%; margin-top:16px; border-collapse:collapse; }
+    .module-table th, .module-table td { padding:8px 0; border-bottom:1px solid #e0eafc; text-align:center; }
+    .module-table th { background:#f0f0f0; }
+    .module-error { background:#ffe0e0; padding:12px; border-radius:8px; margin-top:12px; color:#b00; }
+    </style>
+</body>
+</html>
